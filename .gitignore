@@ -1,0 +1,32 @@
+# Maven target directory
+target/
+
+# IntelliJ IDEA directories
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+gen/
+bin/
+logs/
+*.log
+*.dmp
+*.jks
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.Z
+*.tar.lz4
+*.tar.sz
+*.tar.zst
+
+# Compiled class file
+*.class
+
+# Generated files
+generated/
