@@ -1,0 +1,15 @@
+[thread 생성하기]
+
+스레드 객체 생성 -> run() 구현 (run 내에 스레드가 동작하는 코드를 구현한다)-> start() 호출해서 스레드 시작
+
+[thread 설정]
+thread.setName() <- 스레드 이름 설정
+thread.setPriorty() <- 스레드 스케쥴링 시 우선 순위 설정
+
+[thread 디버깅]
+중단점을 활용하면 개별 스레드 동결 가능
+
+[thread exception handler]
+uncheked 예외 같은 경우에는 개발자가 특정 방법으로 처리하지 않으면 전체 스레드를 다운시킨다.
+그런데 thread.setUncaughtExceptionHandler()를 활용하면,
+ 스레드 내에서 발생한 예외가 어디서도 캐치되지 않을 경우 핸들러가 잡아내게 할 수 있다.

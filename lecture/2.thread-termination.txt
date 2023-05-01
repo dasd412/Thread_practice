@@ -1,0 +1,28 @@
+스레드는 자원을 소모함. 오작동인 스레드가 계속 자원을 점유하고 있으면 비효율적이고, 심지어 장애도 유발 가능.
+따라서 한 스레드에서 다른 스레드의 작동을 멈추는 방법이 필요하다. 그 방법으로는 interrupt() 메서드와 Daemon 스레드를 활용하는 것이다.
+
+interrupt()를 활용하면 시그널을 보내는데, 시그널을 받은 스레드는 InterruptedException 캐치 블록이 있으면 해당 블록에서 예외 처리를 할 수 있다.
+이 블록에서 리소스 회수 로직 등이 처리된다.
+
+그런데 InterruptedException 캐치 블록을 작성할 때 유의점이 있다. 바로 빈 상태로 두는 것이다. 이렇게 하면 인터럽트가 발생해도 return 등 후처리가 되지 않아서
+
+계속 스레드가 도는 비효율적인 상황이 발생할 수 있다.
+
+예를 들어, 다음과 같이 비어있는 catch 블록은 interrupt()를 발생시켜도 무한 루프에 빠지게 된다.
+```
+    private static class SleepingThread implements Runnable {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(1000000);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+    }
+```
+
+Thread.currentThread().isInterrupted()를 활용한 if문으로도 interrupt()로 발생한 시그널 후 처리를 작성할 수 있다.
+
+Daemon 스레드는 애플리케이션을 프로그램적으로 중단할 수 있는 방법이다.
