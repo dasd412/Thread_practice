@@ -1,0 +1,14 @@
+일단, 대부분의 연산은 비원자적 연산이다.
+
+[원자적 연산 예시]
+    1. 레퍼런스 할당
+        Object a = new Object();
+        Object b = new Object();
+        a=b; // <- 원자적 연산임
+
+        getter와 setter 역시 원자적 연산.
+
+    2.long과 double을 제외한 원시형 타입은 원자적 연산임. 즉 동기화 걱정 x
+        long과 double의 경우 volatile 키워드를 적용하면 스레드 안전하게 바뀜.
+        해당 작업이 한 개의 하드웨어 연산으로 수행되는게 보장되기 때문.
+
