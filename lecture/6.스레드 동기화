@@ -1,0 +1,75 @@
+임계 영역 : 스레드가 동시에 실행되지 않게 보호해야 하는 코드 영역
+
+[synchronized]
+    - Locking 메커니즘
+    - 동시에 여러 개의 스레드가 코드 블록이나 메서드 블록에 접근하지 못하게 막음
+
+    (사용 방법)
+        1. 메서드에 synchronized 부착 (모니터 방식이라고도 함)
+        아래 method1을 스레드 A가 사용하고 있다면, 스레드 B는 method1과 method2 모두를 사용할 수 없음.
+        '''
+        public class foo{
+            public synchronized void method1(){
+            ... 스레드 A 사용 중
+            }
+            public synchronized void method2(){
+            ...
+            }
+        }
+        '''
+
+        위 코드는 다음과 동일함.
+        '''
+        public class foo{
+            public void method1(){
+                synchronized(this){
+                    ...
+                }
+            }
+            public void method2(){
+                synchronized(this){
+                    ...
+                }
+            }
+        }
+        '''
+
+        2. 전체 메서드를 잠그지 않고 영역 내에서만 접근 제한 하는 법 (유연성이 더 높고 효율적인 방법. 1.보다 이걸 사용하는 걸 추천한다.)
+
+        '''
+        public class foo{
+            Object lockingObject=new Object();
+
+            public void method1(){
+                synchronized(lockingObject){
+                ... 임계 영역
+                }
+            }
+
+        }
+        '''
+
+        아래 method1을 스레드 A가 사용하고 있다면, 스레드 B는 method2를 사용할 수 있음. 즉, 더 유연성이 높음.
+        '''
+        public class foo{
+            Object lockingObject1=new Object();
+            Object lockingObject2=new Object();
+
+            public void method1(){
+                synchronized(lockingObject1){
+                ... 임계 영역
+                }
+            }
+
+            public void method2(){
+                synchronized(lockingObject2){
+                ... 임계 영역
+                }
+            }
+
+        }
+        '''
+
+[synchronized 블록은 Reentrant 하다.]
+동기화 블록이나 메서드는 재진입할 수 있는 요소이다.
+즉, 스레드가 이미 다른 동기화 메서드나 블록에 있는 상태에서 또 동기화 메서드에 액세스하면 별 문제 없이 그 동기화 메서드에 액세스할 수 있다.
