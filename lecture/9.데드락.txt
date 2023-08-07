@@ -1,0 +1,59 @@
+[locking 기법]
+    (세밀한 락킹 fine-grained locking)
+        - 각 리소스마다 락킹하는 기법
+        - 성긴 락킹보다 효율적이지만 데드락 발생 가능
+
+        FineGrainedDictionary는 각 키마다 별도의 잠금을 사용하여 동시성을 높이려고 함.
+
+        '''
+        public class FineGrainedDictionary {
+            private final Map<String, String> dictionary = new HashMap<>();
+            private final Map<String, Lock> locks = new HashMap<>();
+
+            public void put(String key, String value) {
+                locks.computeIfAbsent(key, k -> new ReentrantLock()).lock();
+                try {
+                    dictionary.put(key, value);
+                } finally {
+                    locks.get(key).unlock();
+                }
+            }
+
+            public String get(String key) {
+                locks.computeIfAbsent(key, k -> new ReentrantLock()).lock();
+                try {
+                    return dictionary.get(key);
+                } finally {
+                    locks.get(key).unlock();
+                }
+            }
+        }
+        '''
+
+    (성긴 락킹 coarse-grained locking)
+        - 모든 공유 리소스에 대해 단일 락킹하는 기법
+
+        CoarseGrainedDictionary는 전체 사전에 대한 단일 잠금을 사용하여 모든 연산을 보호
+
+        '''
+        public class CoarseGrainedDictionary {
+            private final Map<String, String> dictionary = new HashMap<>();
+            private final Object lock = new Object();
+
+            public void put(String key, String value) {
+                synchronized (lock) {
+                    dictionary.put(key, value);
+                }
+            }
+
+            public String get(String key) {
+                synchronized (lock) {
+                    return dictionary.get(key);
+                }
+            }
+        }
+
+        '''
+
+[데드락 해결 방법]
+    - 가장 쉬운 방법은 순환 대기를 하지 못하도록 예방하는 것.
