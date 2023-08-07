@@ -1,6 +1,6 @@
 package org.example;
 
-public class Main3 {
+public class DataRace {
     //Data Race 사례
 
     public static void main(String[] args) {

@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.Random;
 
-public class Main2 {
+public class VolatileAndSynchronized {
     public static void main(String[] args) {
         Metrics metrics = new Metrics();
 

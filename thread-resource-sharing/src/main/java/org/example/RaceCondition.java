@@ -1,6 +1,6 @@
 package org.example;
 
-public class Main {
+public class RaceCondition {
     public static void main(String[] args) throws InterruptedException {
         InventoryCounter inventoryCounter = new InventoryCounter();
         IncrementingThread incrementingThread = new IncrementingThread(inventoryCounter);
