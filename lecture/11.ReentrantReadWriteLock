@@ -1,0 +1,47 @@
+
+[ReentrantReadWriteLock]
+쓰기 락 + 읽기 락 합친 것
+
+읽기가 많고, 쓰기가 적은 캐시의 경우를 보자.
+이 때 reader thread와 writer thread 간 경쟁 상태를 막는 락이 필요하다.
+이 때 reader thread가 공유 자원에 접근하는 것을 막으면 앱 성능에 문제가 발생한다.
+
+읽기 작업이 느린 작업 역시 reader thread가 접근하는 것을 막으면 성능에 문제가 발생한다.
+
+그래서 ReentrantReadWriteLock을 사용한다.
+
+ReentrantReadWriteLock 자체로는 lock을 사용하지 않는 쿼리 메서드다.
+그렇지만 내부 락이 두개 있는데, 읽기 락과 쓰기 락이 있다.
+쓰기 락을 사용해서 공유자원에 접근하는 걸 막는다.
+공유 자원을 읽기만 한다면 읽기 락을 사용해서 임계 영역을 보호하고 작업이 완료되면 락을 푼다.
+
+```java
+ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+Lock readLock = lock.readLock();
+Lock writeLock = lock.writeLock();
+
+method1(){
+    writeLock.lock();
+    try{
+        // 공유 자원에 접근하는 코드
+    }finally{
+        writeLock.unlock();
+    }
+}
+
+method2(){
+    readLock.lock();
+    try{
+        // 공유 자원에 접근하는 코드
+    }finally{
+        readLock.unlock();
+    }
+}
+```
+
+스레드 여러 개가 읽기 락을 가질 수 있다. 하지만 쓰기 락은 하나만 가질 수 있다.
+쓰기 락을 가진 스레드가 있으면 읽기 락을 가진 스레드는 락을 얻을 수 없다.
+읽기 락을 가진 스레드가 있으면 쓰기 락을 가진 스레드는 락을 얻을 수 없다.
+
+[유즈 케이스]
+1. 데이터베이스
