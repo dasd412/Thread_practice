@@ -1,0 +1,62 @@
+reentrant lock은 객체에 적용된 synchronized 키워드처럼 작동한다.
+하지만 locking과 unlocking 명시가 필요하다.
+
+어떠한 일이 발생해도 unlock()을 할 수 있도록, 아래 코드처럼 finally 블록에서 unlock()을 호출한다.
+'''
+Lock lock = new ReentrantLock();
+
+public int foo() throws SomeException{
+    lock.lock();
+    try{
+        // do something
+    } finally{
+        lock.unlock();
+    }
+}
+'''
+
+[reenrant lock의 장점]
+1. 테스팅에 용이한 쿼리 메소드 제공 (복잡한 스레드 어플리케이션 테스트에 매우 좋다!)
+    - getQueuedThreads() : lock을 기다리고 있는 thread 목록을 반환한다.
+    - getOwner() : lock을 소유하고 있는 thread를 반환한다.
+    - isHeldByCurrentThread() : 현재 thread가 lock을 소유하고 있는지 여부를 반환한다.
+    - isLocked() : lock이 획득되었는지 여부를 반환한다.
+
+2. 락의 공정성을 제어할 때 좋음 (그러나 성능엔 안 좋을 수 있음.)
+    - 생성자에 true 넣으면 공정성도 체크함.
+
+[lockInterruptibly() ]
+lock을 획득하려고 대기하는 동안 interrupt를 받으면 InterruptedException을 던진다.
+
+다음 코드에서 스레드가 락을 갖고 있는 동안, 다른 스레드가 interrupt를 보내면 InterruptedException이 발생한다.
+'''
+try{
+    lock.lockInterruptibly();
+} catch(InterruptedException e){
+   cleanUpAndExit();
+}
+'''
+    (lockInterruptibly()의 장점)
+        - 감시 장치로 데드락 스레드를 검출하기 좋음! (데드락 스레드를 interrupt로 깨울 수 있음)
+        - 이 메서드를 사용해 프로그램 정상 종료 가능
+
+[tryLock()]
+lock을 획득하려고 시도하고, 획득에 실패하면 false를 반환한다.
+어떤 경우에도 tryLock()을 차단하지 않는다.
+실시간 앱에서는 스레드가 Lock되면 큰일난다. 그래서 tryLock()을 사용한다.
+
+아래 코드에선 lock()을 갖고 있는 스레드가 있으면, 다음 스레드는 else문에서 처리된다. <- 이래서 실시간 앱에서 tryLock()을 사용한다.
+반면, lock()을 갖고 있는 스레드가 없으면, tryLock()이 true를 반환하고, lock을 획득한다.
+'''
+if(lock.tryLock()){
+    try{
+        // do something
+    } finally{
+        lock.unlock();
+    }
+
+}
+else{
+// do something else
+}
+'''
