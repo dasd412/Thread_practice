@@ -1,0 +1,26 @@
+wait(), notify(),notifyAll()은 Object 클래스가 갖고 있으므로 모든 자바 클래스는 이 메서드들을 사용할 수 있다.
+즉, 자바 프로그램의 어떤 객체라도 조건 변수로 사용할 수 있다는 뜻이다.
+
+[wait()]
+    - 다른 스레드가 깨울 때까지 현재 스레드를 기다리게 한다.
+    - 대기 상태이면, 스레드는 cpu를 사용하지 않는다.
+    - 다른 스레드가 notify()을 호출하면, 대기 상태인 '단 한개의' 스레드가 깨어나서 실행 대기 상태로 들어간다.
+    - notifyAll()을 호출하면, 대기 상태인 모든 스레드가 깨어나서 실행 대기 상태로 들어간다.
+    - wait(), notify(), notifyAll() 사용 시 주의점은, 우선 객체를 동기화해야 한다는 것이다.
+
+    (예시)
+    '''java
+    public class MySharedClass{
+        private boolean isComplete=false;
+        public synchronized void waitUntilComplete(){
+            while(!isComplete){
+                wait();
+            }
+        }
+    }
+
+    public synchronized void complete(){
+            isComplete=true;
+            notifyAll();
+    }
+    '''

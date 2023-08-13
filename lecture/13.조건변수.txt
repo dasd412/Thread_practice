@@ -1,0 +1,48 @@
+세마포어는 사실 조건변수의 특별한 사례다.
+[조건변수로의 세마포어]
+    - acquire() == checking if the condition 'is number of permits>0?'
+    - 만약 조건이 충족되지 않으면, 스레드 A는 다른 스레드가 세마포어 상태를 변경할 때까지 잠든다.
+    - 스레드 B가 release()를 호출하면, 스레드 A는 깨어나서 다시 조건('is number of permits>0?')을 확인한다.
+        - 만약 조건이 충족되면, 스레드 A는 다음 명령어를 실행한다.
+
+조건 변수는 항상 lock과 연관된다.
+
+[Inter-thread-creation]
+'''java
+Lock lock=new ReentrantLock();
+Condition condition=lock.newCondition();
+'''
+
+[Inter-thread-usage] - 생산자 소비자 사례
+
+'''java
+Lock lock=new ReentrantLock();
+Condition condition=lock.newCondition();
+String username=null;
+String password=null;
+
+인증 스레드 :
+    lock.lock();
+    try{ // try 블록에서 관심있는 조건이 충족됬는지 확인
+        while(username==null || password==null){
+            condition.await(); //await()은 다른 스레드가 조건 신호를 보낼 때까지 스레드를 슬립시킴.
+    }
+    finally{
+        lock.unlock();
+    }
+    doStuff();
+
+UI 스레드 :
+    lock.lock();
+    try{
+        username=JOptionPane.showInputDialog("Username : ");
+        password=JOptionPane.showInputDialog("Password : ");
+        condition.signal(); // await()을 호출한 스레드를 깨움. (그러나 아무리 잠든 스레드가 많아도 단 하나만 깨운다.)
+    }
+    finally{
+        lock.unlock();
+    }
+'''
+
+signalAll()은 signal()과 달리 await()을 호출한 모든 스레드를 깨운다.
+

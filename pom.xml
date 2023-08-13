@@ -25,7 +25,7 @@
         <module>thread-resource-sharing</module>
         <module>thread_synchronization</module>
         <module>advanced-locking</module>
-        <module>thread-networking</module>
+        <module>inter-thread-communication</module>
 
     </modules>
 
