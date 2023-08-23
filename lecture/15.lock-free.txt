@@ -25,3 +25,39 @@ atomicInteger.getAndIncrement(); // return the old value
 - 장점 : 락을 사용하지 않고도 스레드 안전한 코드를 작성할 수 있음. 간단함.
 - 단점 : atomic 메서드를 다른 연산과 함께 원자적으로 실행 못함!
 
+[각 변수에 대한 개별 작업이 원자적이여도 이를 집합으로 만드는 작업은 원자적이지 않음]
+
+아래 코드에서 일부 작업은 atomic 연산을 사용해서 스레드 안전 상태가 되긴 했다.
+하지만 2개의 변수를 읽거나 수정하는 경우, 이는 원자적이지 않음.
+
+'''java
+public class Metric {
+    private AtomicLong count = new AtomicLong(0);
+    private AtomicLong sum = new AtomicLong(0);
+
+    public void addSample(long sample) {
+        sum.addAndGet(sample);
+        count.incrementAndGet();
+    }
+
+    public double getAverage() {
+        double average = (double)sum.get()/count.get(); // <- 이 부분이 원자적이지 않음
+        reset();
+        return average;
+    }
+
+    private void reset() {
+        count.set(0);
+        sum.set(0);
+    }
+}
+'''
+
+[AtomicReference]
+- 클래스의 객체에 대한 레퍼런스를 감싸줘서 해당 레퍼런스에서 원자적 연산을 수행할 수 있게 함.
+- compareAndSet 연산을 수행할 수 있음. 이는 이 강의 모든 내용에서 가장 중요한 내용
+
+[compareAndSet]
+- compareAndSet 메서드는 두 개의 인자를 받음. 첫 번째 인자는 기존의 값, 두 번째 인자는 새로운 값
+- 만약 기존의 값이 두 번째 인자와 같다면 새로운 값으로 바꿔줌. 그리고 true를 리턴함.
+- 만약 기존의 값이 두 번째 인자와 다르다면 아무것도 하지 않음. 그리고 false를 리턴함.
