@@ -1,0 +1,27 @@
+[락의 문제]
+1. 데드락 문제 (애플리케이션에 락이 많을수록 데드락이 걸릴 확률이 높음)
+2. slow critical section (락이 걸린 코드가 많을수록 critical section이 길어짐), 모든 스레드가 작업 시간이 가장 느린 스레드만큼 길어지게 됨...
+3. 우선 순위 역전 문제
+4. 스레드가 락을 지닌 채 죽는 문제 (락을 잡고 죽으면 락이 풀리지 않음)
+5. 성능 오버헤드 문제 (락을 얻기 위해 스레드끼리 경쟁하면서 성능에 문제가 생김)
+
+[Lock free technique]
+- 단일 하드웨어 명령어로 실행할 수 있게 보증하는 것
+- 원자적 연산이라는 것은 스레드 안전하다는 것
+
+[AtomicInteger]
+
+```java
+int initialValue = 0;
+
+AtomicInteger atomicInteger = new AtomicInteger(initialValue);
+
+//atomically increment by one
+atomicInteger.incrementAndGet(); // return the new value
+atomicInteger.getAndIncrement(); // return the old value
+```
+
+[이러한 원자적 연산의 장단점]
+- 장점 : 락을 사용하지 않고도 스레드 안전한 코드를 작성할 수 있음. 간단함.
+- 단점 : atomic 메서드를 다른 연산과 함께 원자적으로 실행 못함!
+
